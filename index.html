@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Weather App</h1>
+        <form id="weather-form">
+            <input type="text" id="city" name="city" placeholder="Enter city name" required>
+            <button type="submit">Get Weather</button>
+        </form>
+
+        <div id="weather-result" class="weather-result hidden">
+            <h2>Weather Details</h2>
+            <div class="weather-info">
+                <p><strong>Location:</strong> <span id="location"></span></p>
+                <p><strong>Temperature:</strong> <span id="temperature"></span></p>
+                <p><strong>Condition:</strong> <span id="condition"></span></p>
+                <p><strong>Wind:</strong> <span id="wind"></span></p>
+                <p><strong>Humidity:</strong> <span id="humidity"></span></p>
+                <img id="weather-icon" src="" alt="Weather icon">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('weather-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const city = document.getElementById('city').value.trim();
+            if (!city) {
+                alert('Please enter a city name');
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:8081/weather?city=${city}`);
+                if (!response.ok) throw new Error('Failed to fetch weather data');
+
+                const data = await response.json();
+
+                // Displaying weather information in a structured and user-friendly way
+                document.getElementById('location').textContent = `${data.location.name}, ${data.location.region}, ${data.location.country}`;
+                document.getElementById('temperature').textContent = `${data.current.temp_c} °C / ${data.current.temp_f} °F`;
+                document.getElementById('condition').textContent = `${data.current.condition.text}`;
+                document.getElementById('wind').textContent = `${data.current.wind_kph} kph / ${data.current.wind_mph} mph (${data.current.wind_dir})`;
+                document.getElementById('humidity').textContent = `${data.current.humidity} %`;
+                document.getElementById('weather-icon').src = `http:${data.current.condition.icon}`;
+                document.getElementById('weather-icon').alt = data.current.condition.text;
+
+                document.getElementById('weather-result').classList.remove('hidden');
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        });
+    </script>
+</body>
+</html>
