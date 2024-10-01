@@ -1,6 +1,6 @@
 import ballerina/http;
 
-configurable string apiKey = "0fe42756f8394aeaa1d134246241909";
+configurable string apiKey = "API_Key";
 configurable string baseUrl = "http://api.weatherapi.com/v1";
 
 service / on new http:Listener(8081) {
